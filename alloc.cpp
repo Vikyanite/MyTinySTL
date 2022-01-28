@@ -5,7 +5,7 @@ namespace STL {
     char* alloc::end_free = nullptr;
     size_t alloc::heap_size = 0;
 
-    alloc::obj* alloc::free_list[alloc::NFREELISTS] = {
+    alloc::obj* alloc::free_list[alloc::__NFREELISTS] = {
             nullptr, nullptr, nullptr, nullptr,
             nullptr, nullptr, nullptr, nullptr,
             nullptr,nullptr, nullptr, nullptr,
@@ -13,14 +13,14 @@ namespace STL {
     };
 
     size_t alloc::ROUND_UP(const size_t & bytes) {
-        return ((bytes + ALIGN - 1) & ~(ALIGN - 1));
+        return ((bytes + __ALIGN - 1) & ~(__ALIGN - 1));
     }
 
     size_t alloc::FREELIST_INDEX(const size_t & bytes) {
-        return (((bytes) + ALIGN - 1) / ALIGN - 1);
+        return (((bytes) + __ALIGN - 1) / __ALIGN - 1);
     }
     void *alloc::allocate(const size_t &  n) {
-        if (n > (size_t)MAX_BYTES) {
+        if (n > (size_t)__MAX_BYTES) {
             return malloc(n);
         }
         //从16个free_list中取一个适当大小的空间
@@ -36,7 +36,7 @@ namespace STL {
         return my_free_list;
     }
     void alloc::deallocate(void *ptr, const size_t & n) {
-        if (n > MAX_BYTES) { //大于128
+        if (n > __MAX_BYTES) { //大于128
             free(ptr);
         }
         //回收到对应free_list中
@@ -108,7 +108,7 @@ namespace STL {
             if (start_free == nullptr) { //malloc找不斗空间，寻找大小相近的空间
                 obj** my_free_list;
                 obj* ptr;
-                for (size_t i = bytes; i <= MAX_BYTES; i += ALIGN) {
+                for (size_t i = bytes; i <= __MAX_BYTES; i += __ALIGN) {
                     my_free_list = free_list + FREELIST_INDEX(i);
                     ptr = *my_free_list;
                     if (ptr != nullptr) {

@@ -8,10 +8,10 @@ namespace  STL {
      */
     class alloc {
     private:
-        const static int ALIGN =  8; //小区块上调边界
-        const static int MAX_BYTES = 128; //小型区块上界
-        const static int NFREELISTS = MAX_BYTES / ALIGN; // free_list个数
-        const static int NOBJS = 20; //每次增加的节点数
+        enum{ __ALIGN =  8 }; //小区块上调边界
+        enum{ __MAX_BYTES = 128 };//小型区块上界
+        enum{ __NFREELISTS = __MAX_BYTES / __ALIGN }; // free_list个数
+        enum{ __NOBJS = 20 }; //每次增加的节点数
         static char* start_free; //内存池起点
         static char* end_free; //内存池终点
         static size_t heap_size;
@@ -20,7 +20,7 @@ namespace  STL {
             union obj* nxt;
             char data[1];
         };
-        static obj* free_list[NFREELISTS];
+        static obj* free_list[__NFREELISTS];
 
         //将bytes上调至的倍数
         static size_t ROUND_UP(const size_t & bytes) ;
@@ -37,6 +37,8 @@ namespace  STL {
         static void deallocate(void *ptr, const size_t & bytes) ;
         static void* reallocate(void *ptr, const size_t & old_sz, const size_t & new_sz) ;
 
+        alloc() = default;
+        ~alloc() = default;
     };
 }
 #endif //MY_TINY_STL_ALLOC_H
