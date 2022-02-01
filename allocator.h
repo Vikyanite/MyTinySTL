@@ -41,7 +41,7 @@ namespace STL {
     };
 
     template<class T>
-    T *allocator<T>::allocate() {
+     T *allocator<T>::allocate() {
         return static_cast<T*>(alloc::allocate(sizeof(T)));
     }
 

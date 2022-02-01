@@ -17,17 +17,6 @@ namespace STL {
     }
 
     template<class ForwordIterator>
-    void destroy(ForwordIterator first, ForwordIterator last) {
-        __destroy(first, last);
-    }
-
-    template<class ForwordIterator>
-    void __destroy(ForwordIterator first, ForwordIterator last) {
-        typedef typename STL::__type_traits<ForwordIterator>::has_trivial_desructor trivial_destructor;
-        __destroy_aux(first, last, trivial_destructor());
-    }
-
-    template<class ForwordIterator>
     void __destroy_aux(ForwordIterator first, ForwordIterator last, __true_type) { };
 
     template<class ForwordIterator>
@@ -35,6 +24,17 @@ namespace STL {
         for (; first < last; ++ first) {
             destroy(& (*first));
         }
+    }
+
+    template<class ForwordIterator>
+    void __destroy(ForwordIterator first, ForwordIterator last) {
+        typedef typename STL::__type_traits<ForwordIterator>::has_trivial_destructor trivial_destructor;
+        __destroy_aux(first, last, trivial_destructor());
+    }
+
+    template<class ForwordIterator>
+    void destroy(ForwordIterator first, ForwordIterator last) {
+        __destroy(first, last);
     }
 
 
