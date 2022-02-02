@@ -29,14 +29,17 @@ namespace STL {
         vector() : start(0), finish(0), mem_end(0){};
         vector(const size_type& n, const value_type& value) ;
         explicit vector(const size_type& n);
+        vector(vector& v);
         ~vector();
 
         //操作符重载
-        bool operator ==(const vector& v) const;
-        bool operator !=(const vector& v) const;
+        bool operator ==(vector& v);
+        bool operator !=(vector& v);
+
         //迭代器相关
         iterator begin();
         iterator end();
+
         //容量相关
         size_type size();
         size_type capacity();
@@ -44,6 +47,7 @@ namespace STL {
         void resize(const size_t& n, value_type value=value_type());
         void reserve(const size_t& n);
         void shrink_yo_fit();
+
         //元素访问
         /*为什么这里返回的是引用？如果不是引用的话就相当于返回的是一个拷贝，
          这样的话就不能通过调用T& tmp = vector.front()去修改第一个元素了
@@ -132,7 +136,6 @@ namespace STL {
         else {
             auto needInsertSize = n - size();
             iterator newStart = data_allocator ::allocate(n);
-            std::cout << *begin() << std::endl;
             iterator newFinish = uninitialized_copy(begin(), end(), newStart);
             newFinish = uninitialized_fill_n(newFinish, needInsertSize, value);
 
@@ -149,10 +152,8 @@ namespace STL {
         if (n <= capacity()) { ///只增不减
             return ;
         }
-        std::cout << *begin() << std::endl;
         iterator new_start = data_allocator::allocate(n);
         iterator new_finish = uninitialized_copy(begin(), end(), new_start);
-        std::cout << *begin() << std::endl;
         deallocate();
         start = new_start;
         finish = new_finish;
@@ -180,7 +181,7 @@ namespace STL {
     }
 
     template<class T, class Alloc>
-    bool vector<T, Alloc>::operator==(const vector &v) const {
+    bool vector<T, Alloc>::operator==(vector &v) {
         if (v.size() != size()) return false;
         auto p1 = begin();
         auto p2 = v.begin();
@@ -190,8 +191,8 @@ namespace STL {
     }
 
     template<class T, class Alloc>
-    bool vector<T, Alloc>::operator!=(const vector &v) const {
-        return (this == v) == false;
+    bool vector<T, Alloc>::operator!=(vector &v) {
+        return (*this == v) == false;
     }
 
     template<class T, class Alloc>
@@ -227,7 +228,8 @@ namespace STL {
 
     template<class T, class Alloc>
     void vector<T, Alloc>::pop_back() {
-
+        --finish;
+        destroy(finish);
     }
 
     template<class T, class Alloc>
@@ -241,7 +243,7 @@ namespace STL {
             construct(finish, *(finish-1));
             ++ finish;
             T x_copy = x;
-            copy_backward(position, finish - 2, finish - 1);
+            copy(position, finish, position + 1);
             *position = x_copy;
         }
         else { //无备用空间，扩大并重新分配
@@ -263,7 +265,74 @@ namespace STL {
 
     }
 
-    //迭代器相关
+
+    template<class T, class Alloc>
+    vector<T, Alloc>::vector(vector<T, Alloc> & v) {
+        if (v.capacity()) start = data_allocator::allocate(capacity());
+        finish = mem_end = uninitialized_copy(v.begin(), v.end(), start);
+
+    }
+
+    template<class T, class Alloc>
+    typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(vector::iterator position) {
+        copy(position + 1, finish, position);
+        destroy(finish --);
+        return position;
+    }
+
+    template<class T, class Alloc>
+    typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(vector::iterator first, vector::iterator last) {
+        iterator i = copy(last, finish, first);
+        destroy(i, finish);
+        finish = finish - (last - first);
+        return  first;
+    }
+
+    template<class T, class Alloc>
+    void vector<T, Alloc>::insert(vector::iterator position, const vector::size_type &n, const value_type &val) {
+        if (n != 0) {
+            if (size_type(mem_end - finish) >= n) {
+                // 备用空间大于等于“新增元素个数”
+                T x_copy = val;
+                //计算插入点之后的元素个数
+                const size_type ele_num = finish - position;
+                iterator old_finish = finish;
+                if (ele_num > n) {
+                    // 插入点后现有元素大于新增元素个数
+                    uninitialized_copy(finish - n, finish, finish);
+                    finish += n;
+                    copy_backward(position, old_finish - n, old_finish);
+                    fill(position, position + n, x_copy);
+                }
+                else {
+                    //插入点之后的现有元素个数 小于等于 新增元素个数
+                    uninitialized_fill_n(finish, n - ele_num, x_copy);
+                    finish += n - ele_num;
+                    uninitialized_copy(position, old_finish, finish);
+                    finish += ele_num;
+                    fill(position, old_finish, x_copy);
+                }
+
+            }
+            else {
+                const size_type old_size = size();
+                const size_type len = old_size + max(old_size, n);
+                iterator new_start = data_allocator::allocate(len);
+                iterator new_finish = new_start;
+                new_finish = uninitialized_copy(start, position, new_start);
+                new_finish = uninitialized_fill_n(new_finish, n, val);
+                new_finish = uninitialized_copy(position, finish, new_finish);
+            }
+        }
+    }
+
+    template<class T, class Alloc>
+    typename vector<T, Alloc>::iterator vector<T, Alloc>::insert(vector::iterator position, const value_type &value) {
+        auto delta = position - start;
+        insert_aux(position, value);
+        return start + delta;
+    }
 
 }
+
 #endif //MY_TINY_STL_VECTOR_H
