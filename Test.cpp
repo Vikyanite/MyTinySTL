@@ -2,6 +2,8 @@
 #include "allocator.h"
 #include <vector>
 #include "vector.h"
+#include "list.h"
+
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
     for (int i = 0; i < 5; ++ i) v1.push_back(i);
@@ -14,9 +16,9 @@ void allocatorTest() { //测试自己写的allocator与std::vector的交互
         std::cout << i << " ";
     std::cout << std::endl;
 }
+
 template<class T>
 void print(T &v) {
-    std::cout << "capacity: " << v.capacity() << ", size: " << v.size() << std:: endl;
     std::cout << "in: ";
     for (auto &i : v) std::cout << i << " ";
     std::cout << std::endl;
@@ -88,8 +90,19 @@ void vectorTest() {
     print(v1);
 }
 
+void listTest() {
+    STL::list<int> l1;
+    l1.push_back(1);
+    l1.push_back(2);
+    l1.push_back(-1);
+    print(l1);
+    l1.clear();
+    print(l1);
+}
+
 int main() {
     //allocatorTest(); //clear
     //vectorTest(); //clear
+    listTest();
     return 0;
 }
