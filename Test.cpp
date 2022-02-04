@@ -19,6 +19,7 @@ void allocatorTest() { //测试自己写的allocator与std::vector的交互
 
 template<class T>
 void print(T &v) {
+    std::cout << "size: " << v.size() << std::endl;
     std::cout << "in: ";
     for (auto &i : v) std::cout << i << " ";
     std::cout << std::endl;
@@ -91,13 +92,61 @@ void vectorTest() {
 }
 
 void listTest() {
-    STL::list<int> l1;
-    l1.push_back(1);
-    l1.push_back(2);
+    //构造函数测试
+    STL::list<int> l1(3, 3);
+    STL::list<int> l2;
+    STL::list<int> l3(l1);
+    STL::list<int> l4 = l1;
+
     l1.push_back(-1);
     print(l1);
+    print(l2);
+    print(l3);
+    print(l4);
+
+
+    //元素访问
+    std::cout << "test for front, back : " << l1.front() << " " << l1.back() << std::endl;
+
+    //元素操作
+    l1.pop_front();
+    l1.pop_back();
+    l1.push_back(4);
+    l1.push_front(1);
+    std::cout << "test for push/pop _ front/back : " << std::endl;
+    print(l1);
+
+    std::cout << "test for remove : " << std::endl;
+    l1.remove(-1);
+    print(l1);
+
+    std::cout << "test for swap : " << std::endl;
+    l1.swap(l2);
+    print(l1);
+    print(l2);
+
+    std::cout << "test for reverse : " << std::endl;
+    l1.reverse();
+    print(l1);
+
+    std::cout << "test for sort : " << std::endl;
+    l1.sort();
+    print(l1);
+
+    std::cout << "test for unique : " << std::endl;
+    l1.unique();
+    print(l1);
+
+    std::cout << "test for merge : " << std::endl;
+    l1.merge(l3);
+    print(l1);
+    print(l3);
+
+    std::cout << "test for clear : " << std::endl;
     l1.clear();
     print(l1);
+
+
 }
 
 int main() {

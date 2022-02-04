@@ -40,16 +40,16 @@ namespace STL {
             return *this;
         }
         list_iterator operator++(int) {
-            list_node<T> tmp = *this;
-            -- *this;
+            list_iterator tmp = *this;
+            ++ *this;
             return tmp;
         }
         list_iterator& operator--() {
-            node = (link_type)((*node).nxt);
+            node = (link_type)((*node).pre);
             return *this;
         }
         list_iterator operator--(int) {
-            list_node<T> tmp = *this;
+            list_iterator tmp = *this;
             -- *this;
             return tmp;
         }
@@ -66,9 +66,8 @@ namespace STL {
         typedef value_type&             reference;
         typedef size_t                  size_type;
         typedef list_node*              link_type;
-    private:
+    protected:
         link_type node;
-        size_type sz{};
         typedef allocator<list_node> list_node_allocator;
     public:
         //各种构造和析构
@@ -76,11 +75,30 @@ namespace STL {
             empty_initialize();
         }
 
-        explicit list(size_type n, const value_type& val = value_type());
+        explicit list(size_type n, const value_type& val = value_type()) {
+            empty_initialize();
+            for (int i = 0; i < n; ++ i) push_back(val);
+        }
 
-        list(const list& lis) ;
+        list(list& lis) {
+            empty_initialize();
+            iterator first = lis.begin();
+            iterator last = lis.end();
+            while (first != last) {
+                push_back(*first);
+                first ++;
+            }
+        }
 
-        list& operator = (const list& rhs);
+        list& operator = (const list& rhs) {
+            empty_initialize();
+            iterator first = rhs.begin();
+            iterator last = rhs.end();
+            while (first != last) {
+                push_back(*first);
+                first ++;
+            }
+        }
 
         ~list() {
             clear();
@@ -90,7 +108,7 @@ namespace STL {
         //元素访问
         reference front() { return *begin(); }
         reference back() { return *(--end()); }
-        iterator begin() {return static_cast<link_type>((*node).nxt);}
+        iterator begin() {return static_cast<link_type>(node->nxt);}
         iterator end() {return node;}
 
         //元素操作
@@ -107,11 +125,12 @@ namespace STL {
             erase(--end());
         }
         void remove(const value_type& val) {
-            link_type cur = node->nxt; ///begin
-            while (cur != node) {
-                link_type tmp = cur;
-                ++ cur;
-                if (tmp->data == val) erase(tmp);
+            iterator first = begin();
+            iterator last = end();
+            while (first != last) {
+                iterator tmp = first;
+                if (*tmp == val) erase(tmp);
+                first ++;
             }
 
         }
@@ -126,24 +145,92 @@ namespace STL {
             return tmp;
         }
 
-        void swap(list& lis);
-        void insert(iterator position, size_type n, const value_type& val);
+        void swap(list& lis) {
+            link_type tmp = lis.node;
+            lis.node = node;
+            node = tmp;
+        }
 
-        void unique();
+        void unique() {
+            iterator first = begin();
+            iterator last = end();
+            if (first == last) return ; //skip empty
+
+            iterator nxt = first;
+            while (++ nxt != last) {
+                if (*nxt == *first)
+                    erase(nxt);
+                else
+                    first = nxt;
+                nxt = first;
+            }
+        }
+        void merge(list & lis) {
+            iterator first1 = begin();
+            iterator first2 = lis.begin();
+            iterator last1 = begin();
+            iterator last2 = lis.begin();
+
+            while (first1 != last1 && first2 != last2) {
+                if (*first2 < *first1) {
+                    iterator nxt = first2;
+                    transfer(first1, first2, ++nxt);
+                    first2 = nxt;
+                }
+                else ++ first1;
+            }
+            if (first2 != last2) transfer(last1, first2, last2);
+
+        }
+
+        void reverse() {
+            //小于等于1个的时候不进行翻转
+            if (size() <= 1) return ;
+            iterator first = begin();
+            iterator last = end();
+            while (first != last) {
+                //std::cout << "run" << std::endl;
+                iterator old = first;
+                ++ first;
+                transfer(begin(), old, first);
+            }
+        }
 
         iterator erase(iterator position) {
-            link_type pre_node = position.node->pre;
-            link_type nxt_node = position.node->nxt;
+            auto pre_node = static_cast<link_type>(position.node->pre);
+            auto nxt_node = static_cast<link_type>(position.node->nxt);
             pre_node->nxt = nxt_node;
             nxt_node->pre = pre_node;
 
-            delete_node(position);
+            delete_node(position.node);
             return nxt_node;
         }
-        iterator erase(iterator first, iterator last);
-        void splice(iterator position, list& other);
-        void splice(iterator position, list& other, iterator i);
-        void splice(iterator position, list& other, iterator first, iterator last);
+        iterator erase(iterator first, iterator last) {
+            while (first != last) {
+                iterator tmp = first++;
+                erase(tmp);
+            }
+        }
+        //将other整个放到position之前
+        void splice(iterator position, list& other) {
+            if (!other.empty())
+                transfer(position, other.begin(), other.end());
+        }
+        //将 i 放到position之前
+        void splice(iterator position, list& , iterator i) {
+            iterator j = i;
+            ++ j;
+            if (position == i || position == j) return ;
+            transfer(position, i, j);
+        }
+        void splice(iterator position, list& , iterator first, iterator last) {
+            if (first != last)
+                transfer(position, first, last);
+        }
+
+        void sort() {
+
+        }
 
         //容量相关
         void clear() {
@@ -158,7 +245,14 @@ namespace STL {
         }
 
         bool empty() { return node->nxt == node; };
-        size_type size()const { return sz;};
+        size_type size()const {
+            auto cur = static_cast<link_type>(node->nxt);
+            size_type len = 0;
+            while (cur != node)
+                ++ len,
+                cur = static_cast<link_type>(cur->nxt);
+            return len;
+        };
     private:
         //空间配置器相关
 
@@ -173,18 +267,26 @@ namespace STL {
             destroy(&p->data);
             list_node_allocator ::deallocate(p);
         }
-        void __insert(iterator position, size_type n, const T& val, std::true_type);
 
+        void transfer(iterator position, iterator first, iterator last) {
+            // == last的话就不用动了
+            if (position != last) {
+                static_cast<link_type>(last.node->pre)->nxt = position.node;
+                static_cast<link_type>(first.node->pre)->nxt = last.node;
+                static_cast<link_type>(position.node->pre)->nxt = first.node;
+                auto tmp = static_cast<link_type>(position.node->pre);
+                position.node->pre = last.node->pre;
+                last.node->pre = first.node->pre;
+                first.node->pre = tmp;
+            }
+
+        }
 
         void empty_initialize() {   //创建一个空list
             node = list_node_allocator::allocate();
             node->nxt = node;
             node->pre = node;
-            sz = 0;
         }
-
-    public:
-
     };
 
 
