@@ -168,8 +168,8 @@ namespace STL {
         void merge(list & lis) {
             iterator first1 = begin();
             iterator first2 = lis.begin();
-            iterator last1 = begin();
-            iterator last2 = lis.begin();
+            iterator last1 = end();
+            iterator last2 = lis.end();
 
             while (first1 != last1 && first2 != last2) {
                 if (*first2 < *first1) {
@@ -229,7 +229,24 @@ namespace STL {
         }
 
         void sort() {
+            if (size()  <= 1) return ;
+            list<T> carry;
+            list<T> counter[64];
+            int fill = 0;
 
+            while (!empty()) {
+                carry.splice(carry.begin(), *this, begin());
+                int i = 0;
+                while (i < fill && !counter[i].empty()) {
+                    counter[i].merge(carry);
+                    carry.swap(counter[i++]);
+                }
+                carry.swap(counter[i]);
+                if (i == fill) ++ fill;
+            }
+            for (int i = 1; i < fill; ++ i)
+                counter[i].merge(counter[i - 1]);
+            swap(counter[fill - 1]);
         }
 
         //容量相关
@@ -266,6 +283,18 @@ namespace STL {
         void delete_node(link_type p) {
             destroy(&p->data);
             list_node_allocator ::deallocate(p);
+        }
+
+        void print() {
+            auto cur = static_cast<link_type>(node->nxt);
+            size_type len = 0;
+            while (cur != node)
+                ++ len,
+                        std::cout << cur->data << " ",
+                        cur = static_cast<link_type>(cur->nxt)
+                        ;
+            std::cout << std::endl;
+
         }
 
         void transfer(iterator position, iterator first, iterator last) {

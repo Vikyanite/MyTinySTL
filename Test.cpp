@@ -124,6 +124,9 @@ void listTest() {
     l1.swap(l2);
     print(l1);
     print(l2);
+    l1.swap(l2);
+    std::cout << "test for swap : " << std::endl;
+    print(l1);
 
     std::cout << "test for reverse : " << std::endl;
     l1.reverse();
