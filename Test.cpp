@@ -3,6 +3,7 @@
 #include <vector>
 #include "vector.h"
 #include "list.h"
+#include "deque.h"
 
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
@@ -152,9 +153,25 @@ void listTest() {
 
 }
 
+void dequeTest() {
+    STL::deque<int> d1(8, 3);
+    STL::deque<int> d0;
+    d1.push_back(1);
+    d1.push_front(2);
+    print(d1);
+    std::cout << "front(), back() Test: " << d1.front() << " " << d1.back() << std::endl;
+    print(d1);
+    d1.pop_front();
+    d1.pop_back();
+    print(d1);
+    d1.clear();
+    print(d1);
+}
+
 int main() {
-    //allocatorTest(); //clear
-    //vectorTest(); //clear
-    listTest();
+    //allocatorTest();  //clear
+    //vectorTest();     //clear
+    //listTest();       //clear
+    dequeTest();
     return 0;
 }

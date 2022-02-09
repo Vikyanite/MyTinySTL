@@ -78,7 +78,7 @@ namespace STL {
 
 
     /*********************  uninitialized_fill() *********************/
-    template<class ForwardIterator, class Size, class T>
+    template<class ForwardIterator, class T>
     void __uninitialized_fill_aux(ForwardIterator first,
                                   ForwardIterator last,
                                   const T& x,
@@ -86,7 +86,7 @@ namespace STL {
         fill(first, last, x); ///交由高阶函数去实现
     }
 
-    template<class ForwardIterator, class Size, class T>
+    template<class ForwardIterator, class T>
     void __uninitialized_fill_aux(ForwardIterator first,
                                   ForwardIterator last,
                                   const T& x,
