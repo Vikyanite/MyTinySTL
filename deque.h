@@ -80,8 +80,9 @@ namespace STL {
             else {
                 //不在
                 difference_type node_offset =
-                        offset > 0 ? offset / difference_type(buf_size()) :
-                        -difference_type((-offset - 1) / buf_size()) - 1;
+                        offset > 0 ? offset / difference_type(buf_size())
+                        : - difference_type((-offset - 1) / buf_size()) - 1;
+                set_node(node + node_offset);
                 cur = first + (offset - node_offset * difference_type(buf_size()));
             }
             return *this;
@@ -214,6 +215,7 @@ namespace STL {
             }
             finish = start;
         }
+
         iterator erase(iterator pos) {
             iterator next = pos;
             ++next;
@@ -241,7 +243,7 @@ namespace STL {
                     iterator new_start = start + n;
                     destroy(start, new_start);
                     //将以下冗余空间释放
-                    for (map_pointer cur = start.node; cur < new_start; ++ cur) {
+                    for (map_pointer cur = start.node; cur < new_start.node; ++ cur) {
                         deallocate_node(*cur);
                     }
                     start = new_start;
@@ -250,7 +252,7 @@ namespace STL {
                     copy(last, finish, first);
                     iterator new_finish = finish - n;
                     destroy(new_finish, finish);
-                    for (map_pointer cur = new_finish + 1; cur <= finish.node; ++ cur) {
+                    for (map_pointer cur = new_finish.node + 1; cur <= finish.node; ++ cur) {
                         deallocate_node(*cur);
                     }
                     finish = new_finish;
@@ -258,7 +260,7 @@ namespace STL {
                 return start + ele_before;
             }
         }
-        iterator insert(iterator pos, value_type& val) {
+        iterator insert(iterator pos, const value_type& val) {
             if (pos.cur == start.cur) {
                 push_front(val);
                 return start;
@@ -337,7 +339,7 @@ namespace STL {
             start.cur = start.first;
         }
         //insert实现
-        iterator insert_aux(iterator pos, value_type & val) {
+        iterator insert_aux(iterator pos, const value_type & val) {
             difference_type index = pos - start;
             if (index < size() / 2) { //插入点之前的元素较少
                 push_front(front());

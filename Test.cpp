@@ -156,16 +156,36 @@ void listTest() {
 void dequeTest() {
     STL::deque<int> d1(8, 3);
     STL::deque<int> d0;
+    std::cout << "push_back(), push_front() Test: " << std::endl;
     d1.push_back(1);
     d1.push_front(2);
     print(d1);
-    std::cout << "front(), back() Test: " << d1.front() << " " << d1.back() << std::endl;
+    std::cout << "front(), back(), end(), begin(), [] Test: " << d1.front() << " " << d1.back() << " " << d1[9] << " " << d1[8] << std::endl;
     print(d1);
+
+    d1.erase(d1.begin() + 2);
+    std::cout << "erase(iterator) Test: " << std::endl;
+    print(d1);
+
+    d1.erase(d1.begin() + 2, d1.begin() + 4);
+    std::cout << "erase(iterator first, iterator last) Test: " << std::endl;
+    print(d1);
+
+    std::cout << "pop() Test: " << std::endl;
     d1.pop_front();
     d1.pop_back();
     print(d1);
+
+    d1.insert(d1.begin() + 2, 7);
+    std::cout << "insert(iterator , val) Test: " << std::endl;
+    print(d1);
+
+
+    std::cout << "clear() Test: " << std::endl;
     d1.clear();
     print(d1);
+
+    std::cout << "empty() Test: " << d1.empty() << std::endl;
 }
 
 int main() {
