@@ -65,6 +65,9 @@ namespace STL {
 		return (comp(a, b)) ? b : a;
 	}
 
+	/**             heap related            **/
+	//void
+
 }
 
 #endif //MY_TINY_STL_ALGORITHM_H

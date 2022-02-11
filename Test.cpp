@@ -4,7 +4,8 @@
 #include "vector.h"
 #include "list.h"
 #include "deque.h"
-
+#include "stack.h"
+#include "queue.h"
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
     for (int i = 0; i < 5; ++ i) v1.push_back(i);
@@ -188,10 +189,33 @@ void dequeTest() {
     std::cout << "empty() Test: " << d1.empty() << std::endl;
 }
 
+void stackTest() {
+    STL::stack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    while (!sta.empty()) {
+        std::cout << sta.top() << std::endl;
+        sta.pop();
+    }
+}
+
+void queueTest() {
+    STL::queue<int> q;
+    q.push(1);
+    q.push(2);
+    while (!q.empty()) {
+        std::cout << q.front() << std::endl;
+        q.pop();
+    }
+}
+
 int main() {
     //allocatorTest();  //clear
     //vectorTest();     //clear
     //listTest();       //clear
-    dequeTest();
+    //dequeTest();      //clear
+    //queueTest();       //clear
+    //stackTest();      //clear
+
     return 0;
 }

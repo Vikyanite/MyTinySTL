@@ -8,8 +8,7 @@ namespace STL {
     public:
         typedef typename Sequence::value_type               value_type;
         typedef typename Sequence::size_type                size_type;
-        typedef typename Sequence::reference_type           reference_type;
-        typedef typename Sequence::const_reference_type     const_reference_type;
+        typedef typename Sequence::reference                reference_type;
     protected:
         Sequence c;
     public:
@@ -17,7 +16,7 @@ namespace STL {
         size_type size() { return c.size();}
         reference_type front() {return c.front();}
         reference_type back() {return c.back();}
-        void push(value_type & val) { c.push_back(val);}
+        void push(const value_type & val) { c.push_back(val);}
         void pop() { c.pop_front();}
     };
 }
