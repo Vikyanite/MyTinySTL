@@ -65,8 +65,31 @@ namespace STL {
 		return (comp(a, b)) ? b : a;
 	}
 
-	/**             heap related            **/
-	//void
+
+    /**             heap related            **/
+    template<class RandomAccessIterator, class Distance, class T, class Compare>
+    void __push_heap(RandomAccessIterator first, Distance holeIndex,
+                     Distance topIndex, T value, Compare com) {
+        Distance parent = (holeIndex - 1) / 2;
+        while (holeIndex > topIndex && com(*(first + parent), value) == true) {
+            *(first + holeIndex) = *(first + parent);
+            holeIndex = parent;
+            parent = (holeIndex - 1) / 2;
+        }
+        *(first + holeIndex) = value;
+    }
+
+    template<class RandomAccessIterator, class Distance, class T, class Compare>    //获取distance_type与value_type
+    void __push_heap_aux(RandomAccessIterator first, RandomAccessIterator last, Distance*, T* , Compare com) {
+        __push_heap(first, Distance(first - last - 1), Distance(0), T(*(last - 1)), com);
+    }
+
+    template<class RandomAccessIterator, class Compare>
+    void push_heap(RandomAccessIterator first, RandomAccessIterator last, Compare com) {
+        __push_heap_aux(first, last, distance_type(first), value_type(first), com);
+    }
+
+
 
 }
 
