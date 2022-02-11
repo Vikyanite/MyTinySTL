@@ -2,6 +2,7 @@
 #ifndef MY_TINY_STL_ALGORITHM_H
 #define MY_TINY_STL_ALGORITHM_H
 #include "iterator.h"
+#include "functional.h"
 #include "type_traits.h"
 #include <cstring>
 
@@ -67,11 +68,13 @@ namespace STL {
 
 
     /**             heap related            **/
-    template<class RandomAccessIterator, class Distance, class T, class Compare>
-    void __push_heap(RandomAccessIterator first, Distance holeIndex,
-                     Distance topIndex, T value, Compare com) {
-        Distance parent = (holeIndex - 1) / 2;
-        while (holeIndex > topIndex && com(*(first + parent), value) == true) {
+    template <class RandomIter, class Distance, class T, class Compared>
+    void __push_heap_aux(RandomIter first, Distance holeIndex, Distance topIndex, T value,
+                       Compared comp)
+    {
+        auto parent = (holeIndex - 1) / 2;
+        while (holeIndex > topIndex && comp(*(first + parent), value))
+        {
             *(first + holeIndex) = *(first + parent);
             holeIndex = parent;
             parent = (holeIndex - 1) / 2;
@@ -79,16 +82,68 @@ namespace STL {
         *(first + holeIndex) = value;
     }
 
-    template<class RandomAccessIterator, class Distance, class T, class Compare>    //获取distance_type与value_type
-    void __push_heap_aux(RandomAccessIterator first, RandomAccessIterator last, Distance*, T* , Compare com) {
-        __push_heap(first, Distance(first - last - 1), Distance(0), T(*(last - 1)), com);
+    template <class RandomIter, class Compared, class Distance>
+    void __push_heap(RandomIter first, RandomIter last, Distance*, Compared comp)
+    {
+        __push_heap_aux(first, (last - first) - 1, static_cast<Distance>(0),
+                             *(last - 1), comp);
     }
 
-    template<class RandomAccessIterator, class Compare>
-    void push_heap(RandomAccessIterator first, RandomAccessIterator last, Compare com) {
-        __push_heap_aux(first, last, distance_type(first), value_type(first), com);
+    template <class RandomIter, class Compared>
+    void push_heap(RandomIter first, RandomIter last, Compared comp)
+    {
+        __push_heap(first, last, difference_type(first), comp);
     }
 
+    template <class RandomAccessIterator, class Distance, class T, class Compare>
+    void __adjust_heap(RandomAccessIterator first, Distance holeIndex, Distance len, T value, Compare com) {
+        Distance topIndex = holeIndex;
+        Distance secondChild = 2 * holeIndex + 2;
+        while (secondChild < len) {
+            if (com(*(first + secondChild), *(first + (secondChild - 1))))
+                -- secondChild;
+            *(first + holeIndex) = *(first + secondChild);
+            holeIndex = secondChild;
+            secondChild = 2 * (secondChild + 1);
+        }
+        if (secondChild == len) {
+            *(first + holeIndex) = *(first + (secondChild - 1));
+            holeIndex = secondChild - 1;
+        }
+        __push_heap_aux(first, holeIndex, topIndex, value, com);
+    }
+
+    template <class RandomIter, class T, class Distance, class Compared>
+    void __pop_heap_aux(RandomIter first, RandomIter last, RandomIter result, T value, Distance*, const Compared& comp) {
+        *result = *first;  // 先将尾指设置成首值，即尾指为欲求结果
+        __adjust_heap(first, static_cast<Distance>(0), last - first, value, comp);
+    }
+
+    template <class RandomIter, class Compared >
+    void pop_heap(RandomIter first, RandomIter last, const Compared &comp ) {
+        __pop_heap_aux(first, last - 1, last - 1, *(last - 1), difference_type(first), comp);
+    }
+
+    template <class RandomIter, class Compared=greater<typename RandomIter::value_type>>
+    void make_heap(RandomIter first, RandomIter last, const Compared &comp) {
+        __make_heap_aux(first, last, distance_type(first), comp);
+    }
+
+    template <class RandomIter, class Distance, class Compared>
+    void __make_heap_aux(RandomIter first, RandomIter last, Distance*, const Compared& comp)
+    {
+        if (last - first < 2)
+            return;
+        auto len = last - first;
+        auto holeIndex = (len - 2) / 2;
+        while (true) {
+            // 重排以 holeIndex 为首的子树
+            __adjust_heap(first, holeIndex, len, *(first + holeIndex), comp);
+            if (holeIndex == 0)
+                return;
+            holeIndex--;
+        }
+    }
 
 
 }

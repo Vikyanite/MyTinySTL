@@ -6,6 +6,8 @@
 #include "deque.h"
 #include "stack.h"
 #include "queue.h"
+#include "priority_queue.h"
+
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
     for (int i = 0; i < 5; ++ i) v1.push_back(i);
@@ -209,6 +211,22 @@ void queueTest() {
     }
 }
 
+void priority_queueTest() {
+    STL::priority_queue<int> pq;
+    pq.push(1);
+    pq.push(3);
+    pq.push(4);
+    pq.push(2);
+    pq.push(0);
+
+    while (!pq.empty()) {
+        std::cout << pq.top() << std::endl;
+        pq.pop();
+    }
+
+
+}
+
 int main() {
     //allocatorTest();  //clear
     //vectorTest();     //clear
@@ -216,6 +234,6 @@ int main() {
     //dequeTest();      //clear
     //queueTest();       //clear
     //stackTest();      //clear
-
+    priority_queueTest(); //clear
     return 0;
 }
