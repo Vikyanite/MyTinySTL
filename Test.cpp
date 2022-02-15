@@ -7,6 +7,7 @@
 #include "stack.h"
 #include "queue.h"
 #include "priority_queue.h"
+#include "set.h"
 
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
@@ -227,6 +228,24 @@ void priority_queueTest() {
 
 }
 
+void rb_tree_test() {
+    /*      set test        */
+    STL::set<int> s;
+    s.insert(1);
+    s.insert(1);
+    s.insert(3);
+    s.insert(2);
+    print(s);
+    s.erase(s.begin());
+    print(s);
+    s.erase(3);
+    print(s);
+    s.clear();
+    print(s);
+
+    /*      map test        */
+
+}
 
 int main() {
     //allocatorTest();  //clear
@@ -236,5 +255,6 @@ int main() {
     //queueTest();       //clear
     //stackTest();      //clear
     //priority_queueTest(); //clear
+    rb_tree_test();     //clear
     return 0;
 }

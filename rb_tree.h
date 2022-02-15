@@ -63,7 +63,7 @@ namespace STL {
 
         template <class T>
         struct rb_tree_value_traits {
-            static constexpr bool is_map = is_pair<T>::value;
+            static constexpr bool is_map = STL::is_pair<T>::value;
             using value_traits_type = rb_tree_value_traits_imp<T, is_map>;
 
             using key_type = typename value_traits_type::key_type;
@@ -880,15 +880,15 @@ namespace STL {
                 }
             }
 
-            pair<iterator, bool> insert_unique(const value_type &value) {
+            std::pair<iterator, bool> insert_unique(const value_type &value) {
                 auto res = get_insert_unique_pos(value_traits::get_key(value));
                 if (res.second) { // 插入成功
-                    return make_pair(insert_value_at(res.first.first, value, res.first.second), true);
+                    return std::make_pair(insert_value_at(res.first.first, value, res.first.second), true);
                 }
-                return make_pair(res.first.first, false);
+                return std::make_pair(res.first.first, false);
             }
 
-            pair<iterator, bool> insert_unique(value_type &&value) {
+            std::pair<iterator, bool> insert_unique(value_type &&value) {
                 return emplace_unique(std::move(value));
             }
             iterator insert_unique(iterator hint, const value_type &value) {

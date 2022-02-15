@@ -9,6 +9,8 @@ namespace STL {
     struct __true_type {};
     struct __false_type {};
 
+
+
     template<class type>
     struct __type_traits {
         typedef __false_type has_trivial_default_constructor;
@@ -232,13 +234,28 @@ namespace STL {
 
     };
 
+    template <class T, T v>
+    struct integral_constant {
+        static constexpr T value = v;
+        using value_type = T;
+        using type = integral_constant;
+        operator value_type() const {
+            return value;
+        }
+        value_type operator()() const {
+            return value;
+        }
+    };
+
+    using true_type = integral_constant<bool, true>;
+    using false_type = integral_constant<bool, false>;
     template <class T1, class T2>
     struct pair;
     template <class T>
-    struct is_pair : __false_type {};
+    struct is_pair : false_type {};
 
     template <class T1, class T2>
-    struct is_pair<pair<T1, T2>> : __true_type {};
+    struct is_pair<pair<T1, T2>> : true_type {};
 
 }
 #endif //MY_TINY_STL_TYPE_TRAITS_H

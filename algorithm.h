@@ -159,11 +159,19 @@ namespace STL {
         typedef T2 second_type;
         typedef T1 first_type;
         pair(const T1& v1=T1(), const T2& v2=T2()) : first(v1), second(v2) { }
+
+        template<class T3, class T4>
+        pair& operator=(pair<T3, T4> &t) {
+            first = static_cast<T1>(t.first);
+            second = static_cast<T4>(t.second);
+            return *this;
+        }
     };
     template <class T1, class T2>
-    pair<T1, T2> make_pair(const T1 t1, const T2 t2) {
+    pair<T1, T2> make_pair(T1 t1, T2 t2) {
         return pair<T1, T2>(t1, t2);
     }
+
 
 }
 
