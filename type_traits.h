@@ -3,7 +3,7 @@
 #define MY_TINY_STL_TYPE_TRAITS_H
 
 #include "algorithm.h"
-
+#include <algorithm>
 namespace STL {
 
     struct __true_type {};
@@ -255,7 +255,7 @@ namespace STL {
     struct is_pair : false_type {};
 
     template <class T1, class T2>
-    struct is_pair<pair<T1, T2>> : true_type {};
+    struct is_pair<std::pair<T1, T2>> : true_type {};
 
 }
 #endif //MY_TINY_STL_TYPE_TRAITS_H

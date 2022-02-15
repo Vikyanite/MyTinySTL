@@ -1,24 +1,31 @@
 
-#ifndef MY_TINY_STL_SET_H
-#define MY_TINY_STL_SET_H
+#ifndef MY_TINY_STL_MAP_H
+#define MY_TINY_STL_MAP_H
 #include "functional.h"
 #include "alloc.h"
 #include "rb_tree.h"
+#include <algorithm>
 namespace STL {
-    template <class Key, class Compare=less<Key>>
-    class set {
+    template <class Key, class T, class Compare=less<Key>>
+    class map {
     public:
-        typedef Key         key_type;
-        typedef Key         value_type;
-        typedef Compare     key_compare;
-        typedef Compare     value_compare;
+        typedef Key                     key_type;
+        typedef T                       mapped_type;
+        typedef std::pair<const Key, T> value_type;
+        typedef Compare                 key_compare;
+        class value_compare : public binary_function<value_type, value_type, bool> {
+            friend class map<Key, T, Compare> ;
+        protected:
+            Compare comp;
+            value_compare(Compare c) : comp(c) { }
+        public:
+            bool operator()(const value_type& x, const value_type& y) const {
+                return comp(x.first, y.first);
+            }
+        };
 
     private:
-        template<class T>
-        struct identity : public unary_function<T, T> {
-            const T& operator()(const T& x) const { return x; }
-        };
-        typedef rb_tree<value_type,  key_compare> rep_type;
+        typedef rb_tree<value_type, key_compare> rep_type;
         rep_type tree;
 
     public:
@@ -30,19 +37,19 @@ namespace STL {
         typedef typename rep_type::size_type              size_type;
         typedef typename rep_type::difference_type        difference_type;
         typedef typename rep_type::allocator_type         allocator_type;
-        set() = default;
+        map() = default;
 
         template <class InputIterator>
-        set(InputIterator first, InputIterator last):tree(){ tree.insert_unique(first, last); }
-        set(const set& rhs):tree(rhs.tree_){}
-        set& operator=(const set& rhs) {
+        map(InputIterator first, InputIterator last):tree(){ tree.insert_unique(first, last); }
+        map(const map& rhs):tree(rhs.tree_){}
+        map& operator=(const map& rhs) {
             tree = rhs.tree_;
             return *this;
         }
 
         // 相关接口
         key_compare      key_comp()      const { return tree.key_comp(); }
-        value_compare    value_comp()    const { return tree.key_comp(); }
+        value_compare    value_comp()    const { return value_compare(tree.key_comp()); }
         allocator_type   get_allocator() const { return tree.get_allocator(); }
 
         // 迭代器相关
@@ -63,12 +70,6 @@ namespace STL {
         std::pair<iterator, bool> emplace(Args&& ...args)
         {
             return tree.emplace_unique(std::forward<Args>(args)...);
-        }
-
-        template <class ...Args>
-        iterator emplace_hint(iterator hint, Args&& ...args)
-        {
-            return tree.emplace_unique_use_hint(hint, std::forward<Args>(args)...);
         }
 
         std::pair<iterator, bool> insert(const value_type& value)
@@ -92,7 +93,9 @@ namespace STL {
         void      erase(iterator first, iterator last) { tree.erase(first, last); }
 
         void      clear() { tree.clear(); }
-
+        T& operator[](const key_type& k) {
+            return (*( (insert(value_type(k, T()))).first )).second;
+        }
         // set 相关操作
 
         iterator       find(const key_type& key)              { return tree.find(key); }
@@ -111,21 +114,17 @@ namespace STL {
         equal_range(const key_type& key) const
         { return tree.equal_range_unique(key); }
 
-        void swap(set& rhs) noexcept
+        void swap(map& rhs) noexcept
         { tree.swap(rhs.tree_); }
 
-    public:
-        friend bool operator==(const set& lhs, const set& rhs) { return lhs.tree_ == rhs.tree_; }
-        friend bool operator< (const set& lhs, const set& rhs) { return lhs.tree_ <  rhs.tree_; }
     };
 
 // 重载 mystl 的 swap
     template <class Key, class Compare>
-    void swap(set<Key, Compare>& lhs, set<Key, Compare>& rhs) noexcept
+    void swap(map<Key, Compare>& lhs, map<Key, Compare>& rhs) noexcept
     {
         lhs.swap(rhs);
     }
 
 };
-
-#endif //MY_TINY_STL_SET_H
+#endif //MY_TINY_STL_MAP_H

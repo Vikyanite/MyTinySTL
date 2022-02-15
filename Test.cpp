@@ -8,7 +8,8 @@
 #include "queue.h"
 #include "priority_queue.h"
 #include "set.h"
-
+#include "map.h"
+#include <map>
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
     for (int i = 0; i < 5; ++ i) v1.push_back(i);
@@ -235,6 +236,8 @@ void rb_tree_test() {
     s.insert(1);
     s.insert(3);
     s.insert(2);
+    std::cout << *s.lower_bound(2) << std::endl;
+    std::cout << s.count(1) << std::endl;
     print(s);
     s.erase(s.begin());
     print(s);
@@ -245,6 +248,26 @@ void rb_tree_test() {
 
     /*      map test        */
 
+    STL::map<int, int> mp;
+    mp.insert(std::make_pair(1, 2));
+    mp.insert(std::make_pair(1, 3));
+    for (auto i : mp) {
+        std::cout << i.first << " " << i.second << std::endl;
+    }
+    mp[1] = 3;
+    mp[2] = 4;
+    mp[3] = 5;
+    for (auto i : mp) {
+        std::cout << i.first << " " << i.second << std::endl;
+    }
+    mp.erase(mp.begin());
+    for (auto i : mp) {
+        std::cout << i.first << " " << i.second << std::endl;
+    }
+    mp.erase(2);
+    for (auto i : mp) {
+        std::cout << i.first << " " << i.second << std::endl;
+    }
 }
 
 int main() {

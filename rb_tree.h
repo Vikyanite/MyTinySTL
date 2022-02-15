@@ -1044,22 +1044,17 @@ namespace STL {
                 return const_iterator(y);
             }
 
-            pair<iterator, iterator> equal_range_multi(const key_type &key) {
-                return pair<iterator, iterator>(lower_bound(key), upper_bound(key));
+            std::pair<iterator, iterator> equal_range_multi(const key_type &key) {
+                return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
             }
-            pair<const_iterator, const_iterator> equal_range_multi(const key_type &key) const {
-                return pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));
+            std::pair<const_iterator, const_iterator> equal_range_multi(const key_type &key) const {
+                return std::pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));
             }
 
-            pair<iterator, iterator> equal_range_unique(const key_type &key) {
+            std::pair<iterator, iterator> equal_range_unique(const key_type &key) {
                 iterator it = find(key);
                 auto next = it;
-                return it == end() ? make_pair(it, it) : make_pair(it, ++next);
-            }
-            pair<const_iterator, const_iterator> equal_range_unique(const key_type &key) const {
-                const_iterator it = find(key);
-                auto next = it;
-                return it == end() ? make_pair(it, it) : make_pair(it, ++next);
+                return it == end() ? std::make_pair(it, it) : std::make_pair(it, ++next);
             }
             //交换
             void swap(rb_tree &rhs) noexcept {
@@ -1114,7 +1109,7 @@ namespace STL {
             }
 
             // 插入结点
-            pair<base_ptr, bool> get_insert_multi_pos(const key_type &key) {
+            std::pair<base_ptr, bool> get_insert_multi_pos(const key_type &key) {
                 auto x = root();
                 auto y = m_header;
                 bool add_to_left = true;
@@ -1126,7 +1121,7 @@ namespace STL {
                 return make_pair(y, add_to_left);
             }
 
-            pair<pair<base_ptr, bool>, bool> get_insert_unique_pos(const key_type &key) {
+            std::pair<std::pair<base_ptr, bool>, bool> get_insert_unique_pos(const key_type &key) {
                 // 返回一个 pair，第一个值为一个 pair，包含插入点的父节点和一个
                 // bool 表示是否在左边插入，
                 // 第二个值为一个 bool，表示是否插入成功
@@ -1142,16 +1137,16 @@ namespace STL {
                 if (add_to_left) {
                     if (y == m_header ||
                         j == begin()) { // 如果树为空树或插入点在最左节点处，肯定可以插入新的节点
-                        return make_pair(make_pair(y, true), true);
+                        return std::make_pair(std::make_pair(y, true), true);
                     } else { // 否则，如果存在重复节点，那么 --j 就是重复的值
                         --j;
                     }
                 }
                 if (m_key_comp(value_traits::get_key(*j), key)) { // 表明新节点没有重复
-                    return make_pair(make_pair(y, add_to_left), true);
+                    return std::make_pair(std::make_pair(y, add_to_left), true);
                 }
                 // 进行至此，表示新节点与现有节点键值重复
-                return make_pair(make_pair(y, add_to_left), false);
+                return std::make_pair(std::make_pair(y, add_to_left), false);
             }
 
             iterator insert_value_at(base_ptr x, const value_type &value, bool add_to_left) {
