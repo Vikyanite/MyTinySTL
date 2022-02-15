@@ -66,6 +66,13 @@ namespace STL {
 		return (comp(a, b)) ? b : a;
 	}
 
+	/**         swap() (c++98)      **/
+	template <class T>
+	void swap(T& a, T& b) {
+	    T tmp = a;
+	    a = b;
+	    b = tmp;
+	}
 
     /**             heap related            **/
     template <class RandomIter, class Distance, class T, class Compared>
@@ -145,6 +152,18 @@ namespace STL {
         }
     }
 
+    template <class T1, class T2>
+    struct pair {
+        T1 first;
+        T2 second;
+        typedef T2 second_type;
+        typedef T1 first_type;
+        pair(const T1& v1=T1(), const T2& v2=T2()) : first(v1), second(v2) { }
+    };
+    template <class T1, class T2>
+    pair<T1, T2> make_pair(const T1 t1, const T2 t2) {
+        return pair<T1, T2>(t1, t2);
+    }
 
 }
 

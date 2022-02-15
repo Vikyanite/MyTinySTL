@@ -227,6 +227,7 @@ void priority_queueTest() {
 
 }
 
+
 int main() {
     //allocatorTest();  //clear
     //vectorTest();     //clear
@@ -234,6 +235,6 @@ int main() {
     //dequeTest();      //clear
     //queueTest();       //clear
     //stackTest();      //clear
-    priority_queueTest(); //clear
+    //priority_queueTest(); //clear
     return 0;
 }
