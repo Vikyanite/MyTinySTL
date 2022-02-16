@@ -96,7 +96,7 @@ namespace STL {
         T& operator[](const key_type& k) {
             return (*( (insert(value_type(k, T()))).first )).second;
         }
-        // set 相关操作
+        // multiset 相关操作
 
         iterator       find(const key_type& key)              { return tree.find(key); }
 

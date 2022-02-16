@@ -230,8 +230,8 @@ void priority_queueTest() {
 }
 
 void rb_tree_test() {
-    /*      set test        */
-    STL::set<int> s;
+    /*      multiset test        */
+    STL::multiset<int> s;
     s.insert(1);
     s.insert(1);
     s.insert(3);
