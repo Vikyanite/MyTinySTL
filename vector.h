@@ -23,6 +23,23 @@ namespace STL {
         void deallocate();
         void fill_initialize(const size_type &n, const T& value) ;
         iterator allocate_and_fill(const size_type& n, const T& x);
+        void fill_assign(size_type n, const value_type& value)
+        {
+            if (n > capacity())
+            {
+                vector tmp(n, value);
+                swap(tmp);
+            }
+            else if (n > size())
+            {
+                STL::fill(begin(), end(), value);
+                finish = STL::uninitialized_fill_n(finish, n - size(), value);
+            }
+            else
+            {
+                erase(STL::fill_n(start, n, value), finish);
+            }
+        }
 
     public:
         //构造函数，复制构造函数，析构函数
@@ -65,6 +82,17 @@ namespace STL {
         void insert(iterator position, const size_type& n, const value_type& val);
         iterator insert(iterator position, const value_type& value);
         void clear();
+        void swap(vector<T>& rhs) noexcept
+        {
+            if (this != &rhs)
+            {
+                STL::swap(start, rhs.start);
+                STL::swap(finish, rhs.finish);
+                STL::swap(mem_end, rhs.mem_end);
+            }
+        }
+        void assign(size_type n, const value_type& value)
+        { fill_assign(n, value); }
 
     };
     //构造，析构，赋值

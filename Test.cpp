@@ -9,7 +9,7 @@
 #include "priority_queue.h"
 #include "set.h"
 #include "map.h"
-#include <map>
+#include "unordered_set.h"
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
     for (int i = 0; i < 5; ++ i) v1.push_back(i);
@@ -270,6 +270,16 @@ void rb_tree_test() {
     }
 }
 
+void hashTest() {
+    STL::unordered_set<int> us;
+    us.insert(1);
+    us.insert(3);
+    us.insert(1);
+    us.erase(1);
+    for (auto i : us) {
+        std::cout << i << std::endl;
+    }
+}
 int main() {
     //allocatorTest();  //clear
     //vectorTest();     //clear
@@ -278,6 +288,7 @@ int main() {
     //queueTest();       //clear
     //stackTest();      //clear
     //priority_queueTest(); //clear
-    rb_tree_test();     //clear
+    //rb_tree_test();     //clear
+    hashTest();
     return 0;
 }
