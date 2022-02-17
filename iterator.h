@@ -51,7 +51,7 @@ namespace STL {
     template <class Iterator>
     typename iterator_traits<Iterator>::iterator_category
     iterator_category(const Iterator&) {
-        typedef typename iterator_traits<Iterator>::iterator_category category();
+        typedef typename iterator_traits<Iterator>::iterator_category category;
         return category();
     }
 

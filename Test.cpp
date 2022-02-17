@@ -11,6 +11,7 @@
 #include "map.h"
 #include "unordered_set.h"
 #include "unordered_map.h"
+#include "algorithm.h"
 
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
@@ -273,16 +274,17 @@ void rb_tree_test() {
 }
 
 void hashTest() {
+    //std::cout << "init" << std::endl;
     STL::unordered_set<int> us;
     us.insert(1);
     us.insert(3);
     us.insert(1);
     us.erase(1);
-
+    //std::cout << "before set " << std::endl;
     for (auto i : us) {
         std::cout << i << std::endl;
     }
-
+    //std::cout << "after set " << std::endl;
     STL::unordered_map<int, int> ump;
     ump.insert(std::make_pair(1, 1));
     ump[1] = 2;
@@ -292,15 +294,29 @@ void hashTest() {
     }
 }
 
+void algorithmTest() {
+    STL::vector<int> v;
+    v.push_back(1);
+    v.push_back(-3);
+    v.push_back(4);
+    v.push_back(-2);
+    STL::sort(v.begin(), v.end());
+    for (auto i : v) {
+        std::cout << i << std::endl;
+    }
+    std::cout << *STL::lower_bound(v.begin(), v.end(), -3) << std::endl;
+}
+
 int main() {
-    //allocatorTest();  //clear
-    //vectorTest();     //clear
-    //listTest();       //clear
-    //dequeTest();      //clear
-    //queueTest();       //clear
-    //stackTest();      //clear
-    //priority_queueTest(); //clear
-    //rb_tree_test();     //clear
-    hashTest();
+    allocatorTest();  //clear
+    vectorTest();     //clear
+    listTest();       //clear
+    dequeTest();      //clear
+    queueTest();       //clear
+    stackTest();      //clear
+    priority_queueTest(); //clear
+    rb_tree_test();     //clear
+    hashTest();       //clear
+    algorithmTest();    //clear
     return 0;
 }
