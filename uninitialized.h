@@ -11,7 +11,7 @@ namespace STL {
                                                const Size& n,
                                                const T& x,
                                                __true_type) {
-        return fill_n(first, n, x); ///交由高阶函数去实现
+        return std::fill_n(first, n, x); ///交由高阶函数去实现
     }
 
     template<class ForwardIterator, class Size, class T>

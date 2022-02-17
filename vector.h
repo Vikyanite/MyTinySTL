@@ -3,6 +3,7 @@
 #include "allocator.h"
 #include "iterator.h"
 #include "uninitialized.h"
+#include "algorithm.h"
 namespace STL {
     template <class T, class Alloc = allocator<T>>
     class vector {
@@ -131,7 +132,7 @@ namespace STL {
     template<class T, class Alloc>
     typename vector<T, Alloc>::iterator vector<T, Alloc>::allocate_and_fill(const vector::size_type &n, const T &x) {
         iterator result = data_allocator::allocate(n);
-        uninitialized_fill_n(result, n, x);
+        std::uninitialized_fill_n(result, n, x);
         return result;
     }
 
@@ -181,7 +182,7 @@ namespace STL {
             return ;
         }
         iterator new_start = data_allocator::allocate(n);
-        iterator new_finish = uninitialized_copy(begin(), end(), new_start);
+        iterator new_finish = std::uninitialized_copy(begin(), end(), new_start);
         deallocate();
         start = new_start;
         finish = new_finish;
@@ -310,7 +311,7 @@ namespace STL {
 
     template<class T, class Alloc>
     typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(vector::iterator first, vector::iterator last) {
-        iterator i = copy(last, finish, first);
+        iterator i = std::copy(last, finish, first);
         destroy(i, finish);
         finish = finish - (last - first);
         return  first;

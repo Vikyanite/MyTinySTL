@@ -129,7 +129,7 @@ namespace STL {
         { return ht_.find(key); }
 
 
-        pair<iterator, iterator> equal_range(const key_type& key)
+        std::pair<iterator, iterator> equal_range(const key_type& key)
         { return ht_.equal_range_unique(key); }
 
 

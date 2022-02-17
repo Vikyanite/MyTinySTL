@@ -10,6 +10,8 @@
 #include "set.h"
 #include "map.h"
 #include "unordered_set.h"
+#include "unordered_map.h"
+
 void allocatorTest() { //测试自己写的allocator与std::vector的交互
     std::vector<int, STL::allocator<int> > v1;
     for (int i = 0; i < 5; ++ i) v1.push_back(i);
@@ -276,10 +278,20 @@ void hashTest() {
     us.insert(3);
     us.insert(1);
     us.erase(1);
+
     for (auto i : us) {
         std::cout << i << std::endl;
     }
+
+    STL::unordered_map<int, int> ump;
+    ump.insert(std::make_pair(1, 1));
+    ump[1] = 2;
+    ump[3] = 2;
+    for (auto i : ump) {
+        std::cout << i.first << " " << i.second << std::endl;
+    }
 }
+
 int main() {
     //allocatorTest();  //clear
     //vectorTest();     //clear
